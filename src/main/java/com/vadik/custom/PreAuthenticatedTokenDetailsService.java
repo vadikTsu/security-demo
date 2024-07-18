@@ -1,6 +1,7 @@
 package com.vadik.custom;
 
 import com.vadik.token.Token;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.*;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
@@ -10,11 +11,14 @@ import org.springframework.security.web.authentication.preauth.PreAuthenticatedA
 import java.time.Instant;
 import java.util.List;
 
+
+/**
+ * Loads data about user from Cache or Data Source.
+ * In this case "mock" Data Source/Cache is injected with simplicity purpose;
+ */
 public class PreAuthenticatedTokenDetailsService implements AuthenticationUserDetailsService<PreAuthenticatedAuthenticationToken> {
 
-    private UserDetailsManager dataSource = new InMemoryUserDetailsManager(
-            new User("vadym", "qwer", List.of(new SimpleGrantedAuthority("USER")))
-    );
+    private UserDetailsService dataSource;
 
     @Override
     public UserDetails loadUserDetails(PreAuthenticatedAuthenticationToken authToken) throws UsernameNotFoundException {
@@ -27,5 +31,10 @@ public class PreAuthenticatedTokenDetailsService implements AuthenticationUserDe
                     true, userDetails.getAuthorities());
         }
         throw new UsernameNotFoundException("Invalid Token");
+    }
+
+    public PreAuthenticatedTokenDetailsService setDataSource(UserDetailsService dataSource) {
+        this.dataSource = dataSource;
+        return this;
     }
 }

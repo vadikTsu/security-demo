@@ -14,21 +14,26 @@ import org.springframework.security.web.authentication.session.SessionAuthentica
 import java.time.Duration;
 import java.util.function.Function;
 
-public class OnAuthenticationSuccessStrategy implements SessionAuthenticationStrategy {
 
+/**
+ * Writes JWTs token in cookies with Set-Cookie in response.
+ *
+ * <p>{@link OnAuthenticationSuccessStrategy#onAuthentication(Authentication, HttpServletRequest, HttpServletResponse)}
+ *  is intended to perform token issue when successful authentication occurs.
+ * </p>
+ *
+ */
+public class OnAuthenticationSuccessStrategy implements SessionAuthenticationStrategy {
 
     private final Function<Authentication, Token> tokenFactory = new TokenFactory();
 
     private final TokenSerializer tokenSerializer;
 
-
     private static final String COOKIE_HEADER = "host-auth-token";
-
 
     public OnAuthenticationSuccessStrategy(TokenSerializer tokenSerializer) {
         this.tokenSerializer = tokenSerializer;
     }
-
 
     @Override
     public void onAuthentication(Authentication authentication, HttpServletRequest request, HttpServletResponse response)
